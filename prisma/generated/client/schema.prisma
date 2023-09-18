@@ -1,0 +1,47 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+model Console {
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  codigo         Int
+  nome           String  @unique
+  dataLancamento String
+  empresa        String
+  author         Jogo?   @relation(fields: [authorId], references: [id])
+  authorId       String? @db.ObjectId
+
+  @@map("console")
+}
+
+model Jogo {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  nome           String
+  descricao      String
+  dataLancamento String
+  website        String
+  Desenvolvedor  Desenvolvedor[]
+  genero         String
+  urlCapas       String
+  Console        Console[]
+
+  @@map("jogo")
+}
+
+model Desenvolvedor {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  nome         String
+  dataFundacao String
+  website      String  @unique
+  sede         String
+  author       Jogo?   @relation(fields: [authorId], references: [id])
+  authorId     String? @db.ObjectId
+
+  @@map("desenvolvedor")
+}
